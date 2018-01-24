@@ -14,6 +14,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -108,15 +109,15 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
+        MarkerOptions markerOptions = new MarkerOptions().position(latLng);
         markerOptions.position(latLng);
         markerOptions.title("Start Location");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
         mCurrLocationMarker = mMap.addMarker(markerOptions);
 
-        //move map camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(8));
+        //move camera to current location
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,10);
+        mMap.animateCamera(cameraUpdate);
 
         //stop location updates
         if (mGoogleApiClient != null) {
@@ -181,7 +182,6 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
                     // Permission denied, Disable the functionality that depends on this permission.
                     Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
                 }
-                return;
             }
 
             // other 'case' lines to check for other permissions this app might request.
