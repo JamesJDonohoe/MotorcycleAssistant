@@ -4,6 +4,7 @@
  * The users location will be tracked and all of the sensor data will be read from here.
  *
  * https://developers.google.com/maps/documentation/android-api/map
+ *
  * **/
 
 
@@ -30,9 +31,14 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import static com.example.james.motorcycleassistant.R.id.map;
 
 public class TrackingActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -42,10 +48,11 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     private GoogleMap mMap;
     Marker LocationMarker;
     GoogleApiClient mGoogleApiClient;
-    
+
     Location getLastLocation;
     LocationRequest userLocationRequest;
 
+    //Builds the map using the map fragment
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,15 +63,15 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         }
         // Gets map fragment and allows map to display location
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(map);
         mapFragment.getMapAsync(this);
     }
 
-
+    //Specifies the type of map, Normal, Hybrid or Terrain
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -80,7 +87,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
             mMap.setMyLocationEnabled(true);
         }
     }
-
+    //Builds the map
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -106,11 +113,13 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
     }
 
+    //Default method, not used for anything
     @Override
     public void onConnectionSuspended(int i) {
 
     }
 
+    //Handles location, sets marker onto location
     @Override
     public void onLocationChanged(Location location) {
 
@@ -122,11 +131,21 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
         //Uses LatLng to get the location and display a marker at the location
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+        /*
         MarkerOptions markerOptions = new MarkerOptions().position(latLng);
         markerOptions.position(latLng);
         markerOptions.title("Starting Location");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-        LocationMarker = mMap.addMarker(markerOptions);
+        */
+
+        //Adds a custom marker onto the location point
+        mMap.addMarker(new MarkerOptions().position(latLng)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_arrow))
+                .position(latLng)
+                .flat(true)
+                .rotation(245)
+                .title("Starting Location"));
 
         //move camera to current location
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,10);
@@ -170,6 +189,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         }
     }
 
+    //Asks for permission from the user, checks manifest for correct requests
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
