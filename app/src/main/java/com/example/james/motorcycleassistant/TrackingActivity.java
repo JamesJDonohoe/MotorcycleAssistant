@@ -4,14 +4,21 @@
  * The users location will be tracked and all of the sensor data will be read from here.
  *
  * https://developers.google.com/maps/documentation/android-api/map
+ * https://developer.android.com/reference/android/hardware/SensorManager.html
  *
  * **/
 
 
 package com.example.james.motorcycleassistant;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -19,6 +26,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -31,19 +40,28 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import static com.example.james.motorcycleassistant.R.id.map;
 
 public class TrackingActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener{
+        LocationListener, SensorEventListener{
+    //Variable for the accelerometer sensor
+    private float lastX, lastY, lastZ;
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+
+    private float deltaX = 0;
+    private float deltaY = 0;
+    private float deltaZ = 0;
+
+    //Values for my counter
+    int xCounter ;
+    int yzCounter;
 
     private GoogleMap mMap;
     Marker LocationMarker;
@@ -53,10 +71,25 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     LocationRequest userLocationRequest;
 
     //Builds the map using the map fragment
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracking);
+
+        //Checks to see if the sensor is available on the device
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
+            //if accelerometer is found the sensor listener starts
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+        } else {
+            //if we don't have a sensor user is brought back to main menu
+            Toast.makeText(this, "No Accelerometer Detect", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(TrackingActivity.this, Screen1.class);
+            startActivity(intent);
+            finish();
+        }
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
@@ -65,7 +98,9 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(map);
         mapFragment.getMapAsync(this);
+
     }
+
 
     //Specifies the type of map, Normal, Hybrid or Terrain
     @Override
@@ -141,11 +176,11 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
         //Adds a custom marker onto the location point
         mMap.addMarker(new MarkerOptions().position(latLng)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_arrow))
-                .position(latLng)
-                .flat(true)
-                .rotation(245)
-                .title("Starting Location"));
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));//fromResource(R.drawable.bike_arrow))
+                //.position(latLng)
+                //.flat(true)
+                //.rotation(245)
+                //.title("Starting Location"));
 
         //move camera to current location
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,10);
@@ -221,9 +256,80 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
                     finish();
                 }
             }
-
-            // other 'case' lines to check for other permissions this app might request.
-            // You can add here other case statements according to your requirement.
         }
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        // get the change of the x,y,z values of the accelerometer
+        deltaX = Math.abs(lastX - event.values[0]);
+        deltaY = Math.abs(lastY - event.values[1]);
+        deltaZ = Math.abs(lastZ - event.values[2]);
+
+        // if the change is below 2, it is just plain noise
+        if (deltaX < 2)
+            deltaX = 0;
+        if (deltaY < 2)
+            deltaY = 0;
+        if (deltaZ < 2)
+            deltaZ = 0;
+
+        // set the last know values of x,y,z
+        lastX = event.values[0];
+        lastY = event.values[1];
+        lastZ = event.values[2];
+
+        if(deltaX >=5 || deltaX <= -5){
+            xCounter++;
+        }
+        if(deltaY >=10 || deltaY<=-10 || deltaZ >= 10 || deltaZ <=-10){
+            yzCounter++;
+
+        }
+
+        //Button to stop journey
+        Button stopBtn;
+        stopBtn = (Button) findViewById(R.id.stopBtn);
+
+        stopBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TrackingActivity.this, StatActivity.class);
+                //When button is pressed it will start a new activity but also send the value of the x/ y counter with it
+                intent.putExtra("yzValue" , getyzVal());
+                intent.putExtra("xValue", getxVal());
+                startActivity(intent);
+
+            }
+        });
+    }
+
+    //getxVal gets the value from xCounter and places it into a new variable xVal this can be used for the intent
+    private int getxVal(){
+        int xVal = Integer.parseInt(String.valueOf(xCounter));
+        return xVal;
+    }
+    //getyzVal gets the value from yzCounter and places it into a new variable val this can be used for the intent
+    private int getyzVal(){
+        int val = Integer.parseInt(String.valueOf(yzCounter));
+        return val;
+        //return yzCounter;
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    //onResume() register the accelerometer for listening the events
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+    }
+
+    //onPause() unregister the accelerometer for stop listening the events
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
     }
 }
