@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MotorcycleAssistant.iml" filepath="$PROJECT_DIR$/MotorcycleAssistant.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/MotorcycleAssistant.iml" filepath="$PROJECT_DIR$/.idea/MotorcycleAssistant.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
