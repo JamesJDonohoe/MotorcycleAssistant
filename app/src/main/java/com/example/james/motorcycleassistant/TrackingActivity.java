@@ -12,8 +12,10 @@
 package com.example.james.motorcycleassistant;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -44,17 +46,22 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import static com.example.james.motorcycleassistant.R.id.map;
 
 public class TrackingActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener, SensorEventListener{
+
     //Variable for the accelerometer sensor
     private float lastX, lastY, lastZ;
     private SensorManager sensorManager;
     private Sensor accelerometer;
 
+    //variables for accelerometer
     private float deltaX = 0;
     private float deltaY = 0;
     private float deltaZ = 0;
@@ -63,12 +70,19 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     int xCounter ;
     int yzCounter;
 
+    //Values to display star rating. Variables are equal to stars that are in the drawable folder
+    int fiveStar = R.drawable.star5;
+    int fourStar = R.drawable.star4;
+    int threeStar = R.drawable.star3;
+    int twoStar = R.drawable.star2;
+    int oneStar = R.drawable.star1;
+
     private GoogleMap mMap;
     Marker LocationMarker;
     GoogleApiClient mGoogleApiClient;
-
     Location getLastLocation;
     LocationRequest userLocationRequest;
+
 
     //Builds the map using the map fragment
     @SuppressLint("WrongViewCast")
@@ -137,9 +151,9 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     public void onConnected(Bundle bundle) {
         //Used to get an accurate location of the device
         userLocationRequest = new LocationRequest();
-        userLocationRequest.setInterval(1000);
-        userLocationRequest.setFastestInterval(1000);
-        userLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        userLocationRequest.setInterval(100);
+        userLocationRequest.setFastestInterval(100);
+        userLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -259,6 +273,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         }
     }
 
+    //Handles the sensor events and the change of the sensors state
     @Override
     public void onSensorChanged(SensorEvent event) {
         // get the change of the x,y,z values of the accelerometer
@@ -279,25 +294,34 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         lastY = event.values[1];
         lastZ = event.values[2];
 
+        //Left and right / Cornering
         if(deltaX >=5 || deltaX <= -5){
             xCounter++;
         }
-        if(deltaY >=10 || deltaY<=-10 || deltaZ >= 10 || deltaZ <=-10){
+        //Up and down / Breaking and acceleration
+        if(deltaY >=10 || deltaY<=-5 ){
             yzCounter++;
-
         }
 
         //Button to stop journey
-        Button stopBtn;
+        final Button stopBtn;
         stopBtn = (Button) findViewById(R.id.stopBtn);
 
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(TrackingActivity.this, StatActivity.class);
+
+                //When the stop button is clicked the service will stop
                 //When button is pressed it will start a new activity but also send the value of the x/ y counter with it
                 intent.putExtra("yzValue" , getyzVal());
                 intent.putExtra("xValue", getxVal());
+
+                //Gets xCounter val from sendxCounterStars and returns star based on xCounter value
+                intent.putExtra("starxVal", sendxCounterStars());
+
+                //Gets yzCounter from sendyzCounterStars and returns star based on XCounter value
+                intent.putExtra("staryzVal", sendyzCounterStars());
                 startActivity(intent);
 
             }
@@ -316,6 +340,34 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         //return yzCounter;
     }
 
+    //Sending stars for rating, braking and acceleration
+    private int sendxCounterStars(){
+        if(xCounter <=30)
+            return fiveStar;
+        if(xCounter >=31 && xCounter <=50)
+            return fourStar;
+        if(xCounter >=51 && xCounter <=60)
+            return threeStar;
+        if(xCounter >=61 && xCounter <=70)
+            return twoStar;
+        else
+            return oneStar;
+    }
+
+    //Sending stars for rating, cornering
+    private int sendyzCounterStars(){
+        if(yzCounter <=30)
+            return fiveStar;
+        if(yzCounter >=31 && yzCounter <=50)
+            return fourStar;
+        if(yzCounter >=51 && yzCounter <=60)
+            return threeStar;
+        if(yzCounter >=61 && yzCounter <=70)
+            return twoStar;
+        else
+            return oneStar;
+    }
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
@@ -326,10 +378,14 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         super.onResume();
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
     }
-
     //onPause() unregister the accelerometer for stop listening the events
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

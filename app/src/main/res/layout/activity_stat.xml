@@ -4,31 +4,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="#ffffff"
+    android:background="@mipmap/background_1"
     android:gravity="center"
     android:orientation="vertical"
-    android:paddingTop="20dp" >
+    android:paddingTop="20dp">
+
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="10dp"
         android:text="How was your journey?"
+        android:textColor="@color/textColor"
         android:textSize="36sp"
         android:textStyle="bold"
         tools:ignore="HardcodedText"
-        android:textColor="@color/textColor"/>
+        android:layout_marginBottom="20dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
         android:text="This is how many times you broke too hard"
-        android:textSize="15sp"
-        tools:ignore="HardcodedText"
-        android:textColor="@color/textColor"/>
+        android:textColor="@color/textColor"
+        android:textSize="19sp"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/baValue"
@@ -36,21 +37,31 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
+        android:paddingBottom="10dp"
         android:text="0"
-        android:textSize="20sp"
-        tools:ignore="HardcodedText"
-        android:textColor="@color/textColor"/>
+        android:textColor="@color/textColor"
+        android:textSize="30sp"
+        tools:ignore="HardcodedText" />
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/starView"
+            android:layout_width="350dp"
+            android:layout_height="80dp"/>
+    </RelativeLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
+        android:paddingTop="50dp"
         android:text="This is how many times you cornered too fast"
-        android:textSize="15sp"
-        tools:ignore="HardcodedText"
-        android:textColor="@color/textColor"/>
+        android:textColor="@color/textColor"
+        android:textSize="19sp"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/cornerVal"
@@ -58,9 +69,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
+        android:paddingBottom="10dp"
         android:text="0"
-        android:textSize="20sp"
-        tools:ignore="HardcodedText"
-        android:textColor="@color/textColor"/>
+        android:textColor="@color/textColor"
+        android:textSize="30sp"
+        tools:ignore="HardcodedText" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
+        <ImageView
+            android:id="@+id/starView2"
+            android:layout_width="350dp"
+            android:layout_height="80dp" />
+    </RelativeLayout>
 </LinearLayout>

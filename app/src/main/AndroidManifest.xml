@@ -24,7 +24,7 @@
         </activity>
         <activity
             android:name=".Screen1"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -40,8 +40,10 @@
 
         <activity
             android:name=".TrackingActivity"
-            android:label="@string/title_activity_tracking"></activity>
-        <activity android:name=".StatActivity"></activity>
+            android:label="@string/title_activity_tracking" />
+        <activity android:name=".StatActivity" />
+        <activity android:name=".BrakingInfoActivity"></activity>
+
     </application>
 
 </manifest>
