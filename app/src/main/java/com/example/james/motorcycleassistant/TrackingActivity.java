@@ -12,16 +12,16 @@
 package com.example.james.motorcycleassistant;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.net.sip.SipSession;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -29,6 +29,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
@@ -45,10 +46,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.text.DateFormat;
-import java.util.Date;
-
 import static com.example.james.motorcycleassistant.R.id.map;
 
 public class TrackingActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -90,6 +87,8 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracking);
+        //Allows screen to stay on
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         //Checks to see if the sensor is available on the device
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -151,8 +150,9 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     public void onConnected(Bundle bundle) {
         //Used to get an accurate location of the device
         userLocationRequest = new LocationRequest();
-        userLocationRequest.setInterval(100);
-        userLocationRequest.setFastestInterval(100);
+        //Requests the location every second
+        userLocationRequest.setInterval(1000);
+        userLocationRequest.setFastestInterval(1000);
         userLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -181,20 +181,10 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         //Uses LatLng to get the location and display a marker at the location
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-        /*
-        MarkerOptions markerOptions = new MarkerOptions().position(latLng);
-        markerOptions.position(latLng);
-        markerOptions.title("Starting Location");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-        */
-
         //Adds a custom marker onto the location point
         mMap.addMarker(new MarkerOptions().position(latLng)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));//fromResource(R.drawable.bike_arrow))
-                //.position(latLng)
-                //.flat(true)
-                //.rotation(245)
-                //.title("Starting Location"));
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                .title("Starting Location"));
 
         //move camera to current location
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,10);
@@ -299,13 +289,14 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
             xCounter++;
         }
         //Up and down / Breaking and acceleration
-        if(deltaY >=10 || deltaY<=-5 ){
+        if(deltaY >=5 || deltaY<-5 && deltaZ >=5 || deltaZ <-5){
             yzCounter++;
         }
 
         //Button to stop journey
         final Button stopBtn;
         stopBtn = (Button) findViewById(R.id.stopBtn);
+
 
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -322,8 +313,14 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
                 //Gets yzCounter from sendyzCounterStars and returns star based on XCounter value
                 intent.putExtra("staryzVal", sendyzCounterStars());
-                startActivity(intent);
 
+                //If both cornering and acceleration/ braking is 5 star a toast message will be displayed
+                if (sendxCounterStars() == fiveStar && sendyzCounterStars() == fiveStar)
+                {
+                    Toast.makeText(getApplicationContext(), "You had a perfect drive, well done!!", Toast.LENGTH_LONG).show();
+                }
+
+                startActivity(intent);
             }
         });
     }

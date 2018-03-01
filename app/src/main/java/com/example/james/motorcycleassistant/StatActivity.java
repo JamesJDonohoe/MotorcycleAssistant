@@ -1,15 +1,17 @@
+/**
+ * This class handles the results of the users journey.
+ * The star rating system is displayed here, all results are sent from the TrackingActivity and displayed here
+ * The number of times the users brake/ accelerate too hard and corner too hard is also displayed here
+ * **/
 package com.example.james.motorcycleassistant;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.HashMap;
 
 
 public class StatActivity extends Activity{
@@ -59,6 +61,4 @@ public class StatActivity extends Activity{
         });//end of on click listener
 
     }
-
-
 }
