@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Motorcycle Assistant</string>
     <string name="title_activity_tracking">Map</string>
+
 </resources>

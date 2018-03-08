@@ -12,16 +12,17 @@
 package com.example.james.motorcycleassistant;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Criteria;
 import android.location.Location;
-import android.net.sip.SipSession;
+import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -32,6 +33,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -46,14 +48,19 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
+
 import static com.example.james.motorcycleassistant.R.id.map;
 
 public class TrackingActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener, SensorEventListener{
+        LocationListener, SensorEventListener {
 
-    //Variable for the accelerometer sensor
+    //Variables for the accelerometer sensor
     private float lastX, lastY, lastZ;
     private SensorManager sensorManager;
     private Sensor accelerometer;
@@ -64,7 +71,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     private float deltaZ = 0;
 
     //Values for my counter
-    int xCounter ;
+    int xCounter;
     int yzCounter;
 
     //Values to display star rating. Variables are equal to stars that are in the drawable folder
@@ -76,10 +83,11 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
     private GoogleMap mMap;
     Marker LocationMarker;
+    MarkerOptions mOptions;
     GoogleApiClient mGoogleApiClient;
     Location getLastLocation;
     LocationRequest userLocationRequest;
-
+    ArrayList<LatLng> points = new ArrayList<>();
 
     //Builds the map using the map fragment
     @SuppressLint("WrongViewCast")
@@ -95,7 +103,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
             //if accelerometer is found the sensor listener starts
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         } else {
             //if we don't have a sensor user is brought back to main menu
             Toast.makeText(this, "No Accelerometer Detect", Toast.LENGTH_SHORT).show();
@@ -103,6 +111,11 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
             startActivity(intent);
             finish();
         }
+
+        //Displays marker on LatLng
+        mOptions = new MarkerOptions().position(new LatLng(0, 0)).title("My Current Location")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
@@ -120,6 +133,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        LocationMarker = mMap.addMarker(mOptions);
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -129,12 +143,13 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
                 buildGoogleApiClient();
                 mMap.setMyLocationEnabled(true);
             }
-        }
-        else {
+        } else {
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
+
     }
+
     //Builds the map
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -171,30 +186,15 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     //Handles location, sets marker onto location
     @Override
     public void onLocationChanged(Location location) {
-
-        //This gets the Current/Last Location an stores it in a variable called location
-        getLastLocation = location;
-        if (LocationMarker != null) {
-            LocationMarker.remove();
-        }
-
-        //Uses LatLng to get the location and display a marker at the location
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-        //Adds a custom marker onto the location point
-        mMap.addMarker(new MarkerOptions().position(latLng)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-                .title("Starting Location"));
-
-        //move camera to current location
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,10);
-        mMap.animateCamera(cameraUpdate);
-
-        //stop location updates
-        if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        }
-
+        //Adds a marker on the current position found in LatLng
+        LatLng myCoordinates = new LatLng(location.getLatitude(), location.getLongitude());
+        LocationMarker.setPosition(myCoordinates);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(myCoordinates));
+        float zoomLevel = 12.0f;
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myCoordinates, zoomLevel));
+        //Adds marker on each location update
+        points.add(myCoordinates);
+        mMap.addMarker(new MarkerOptions().position(myCoordinates));
     }
 
     @Override
@@ -215,8 +215,6 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
                 ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
-
-
             } else {
                 ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
@@ -319,22 +317,20 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
                 {
                     Toast.makeText(getApplicationContext(), "You had a perfect drive, well done!!", Toast.LENGTH_LONG).show();
                 }
-
+                //Starts the new activity
                 startActivity(intent);
             }
         });
+
     }
 
     //getxVal gets the value from xCounter and places it into a new variable xVal this can be used for the intent
     private int getxVal(){
-        int xVal = Integer.parseInt(String.valueOf(xCounter));
-        return xVal;
+        return Integer.parseInt(String.valueOf(xCounter));
     }
     //getyzVal gets the value from yzCounter and places it into a new variable val this can be used for the intent
     private int getyzVal(){
-        int val = Integer.parseInt(String.valueOf(yzCounter));
-        return val;
-        //return yzCounter;
+        return Integer.parseInt(String.valueOf(yzCounter));
     }
 
     //Sending stars for rating, braking and acceleration
@@ -369,11 +365,10 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
-
     //onResume() register the accelerometer for listening the events
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
     //onPause() unregister the accelerometer for stop listening the events
     protected void onPause() {

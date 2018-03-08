@@ -36,7 +36,7 @@ public class StatActivity extends Activity{
         //Displays braking and acceleration star rating
         starView = (ImageView) findViewById(R.id.starView);
         String sVal = intent.getExtras().get("staryzVal").toString();
-        starView.setImageResource(Integer.parseInt(sVal));
+        starView.setImageResource(Integer.parseInt((sVal)));
 
         //Displays cornering star rating
         starView2 = (ImageView) findViewById(R.id.starView2);
