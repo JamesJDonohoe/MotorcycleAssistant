@@ -65,11 +65,6 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     private SensorManager sensorManager;
     private Sensor accelerometer;
 
-    //variables for accelerometer
-    private float deltaX = 0;
-    private float deltaY = 0;
-    private float deltaZ = 0;
-
     //Values for my counter
     int xCounter;
     int yzCounter;
@@ -81,12 +76,14 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     int twoStar = R.drawable.star2;
     int oneStar = R.drawable.star1;
 
+    //Variables for google maps, markers and requests
     private GoogleMap mMap;
     Marker LocationMarker;
     MarkerOptions mOptions;
     GoogleApiClient mGoogleApiClient;
-    Location getLastLocation;
     LocationRequest userLocationRequest;
+
+    //Array used to store coordinates
     ArrayList<LatLng> points = new ArrayList<>();
 
     //Builds the map using the map fragment
@@ -112,11 +109,11 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
             finish();
         }
 
-        //Displays marker on LatLng
-        mOptions = new MarkerOptions().position(new LatLng(0, 0)).title("My Current Location")
+        //Displays Starting Marker on LatLng
+        mOptions = new MarkerOptions().position(new LatLng(0, 0)).title("Starting Location")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 
-
+        //Checks SDK version
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
@@ -147,7 +144,6 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
-
     }
 
     //Builds the map
@@ -166,8 +162,8 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         //Used to get an accurate location of the device
         userLocationRequest = new LocationRequest();
         //Requests the location every second
-        userLocationRequest.setInterval(1000);
-        userLocationRequest.setFastestInterval(1000);
+        userLocationRequest.setInterval(5000);
+        userLocationRequest.setFastestInterval(5000);
         userLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -185,16 +181,41 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
     //Handles location, sets marker onto location
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(final Location location) {
+
         //Adds a marker on the current position found in LatLng
-        LatLng myCoordinates = new LatLng(location.getLatitude(), location.getLongitude());
+        final LatLng myCoordinates = new LatLng(location.getLatitude(), location.getLongitude());
         LocationMarker.setPosition(myCoordinates);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myCoordinates));
         float zoomLevel = 12.0f;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myCoordinates, zoomLevel));
+
         //Adds marker on each location update
         points.add(myCoordinates);
         mMap.addMarker(new MarkerOptions().position(myCoordinates));
+
+            mMap.addPolyline(new PolylineOptions()
+                    .addAll(points)
+                    .width(5)
+                    .color(Color.RED));
+
+        //Button used to get and display ending location
+        Button stopLocBtn;
+        stopLocBtn = (Button) findViewById(R.id.stopLocBtn);
+        stopLocBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final LatLng myendCoordinates = new LatLng(location.getLatitude(), location.getLongitude());
+                points.add(myendCoordinates);
+
+                LocationMarker.setPosition(myendCoordinates);
+                mMap.addMarker(new MarkerOptions()
+                        .position(myendCoordinates)
+                        .title("End location"));
+
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, TrackingActivity.this);
+            }
+        });
     }
 
     @Override
@@ -265,9 +286,9 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     @Override
     public void onSensorChanged(SensorEvent event) {
         // get the change of the x,y,z values of the accelerometer
-        deltaX = Math.abs(lastX - event.values[0]);
-        deltaY = Math.abs(lastY - event.values[1]);
-        deltaZ = Math.abs(lastZ - event.values[2]);
+        float deltaX = Math.abs(lastX - event.values[0]);
+        float deltaY = Math.abs(lastY - event.values[1]);
+        float deltaZ = Math.abs(lastZ - event.values[2]);
 
         // if the change is below 2, it is just plain noise
         if (deltaX < 2)
@@ -287,7 +308,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
             xCounter++;
         }
         //Up and down / Breaking and acceleration
-        if(deltaY >=5 || deltaY<-5 && deltaZ >=5 || deltaZ <-5){
+        if(deltaY >=5 || deltaY <-5 && deltaZ >=5 || deltaZ <-5){
             yzCounter++;
         }
 

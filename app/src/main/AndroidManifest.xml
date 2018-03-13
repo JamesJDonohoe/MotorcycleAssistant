@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -43,8 +43,7 @@
             android:name=".TrackingActivity"
             android:label="@string/title_activity_tracking" />
         <activity android:name=".StatActivity" />
-        <activity android:name=".BrakingInfoActivity"></activity>
-
+        <activity android:name=".BrakingInfoActivity" />
     </application>
 
 </manifest>
