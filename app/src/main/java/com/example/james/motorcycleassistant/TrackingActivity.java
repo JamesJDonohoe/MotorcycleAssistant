@@ -86,6 +86,9 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     //Array used to store coordinates
     ArrayList<LatLng> points = new ArrayList<>();
 
+    //Making myCoordinates Global
+    LatLng myCoordinates;
+
     //Builds the map using the map fragment
     @SuppressLint("WrongViewCast")
     @Override
@@ -122,6 +125,26 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
                 .findFragmentById(map);
         mapFragment.getMapAsync(this);
 
+        //Button used to get and display ending location
+        Button stopLocBtn;
+        stopLocBtn = (Button) findViewById(R.id.stopLocBtn);
+        stopLocBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Adds points to myCoordinates
+                points.add(myCoordinates);
+
+                //Adds a marker onto the last LatLng titled End Location
+                LocationMarker.setPosition(myCoordinates);
+                mMap.addMarker(new MarkerOptions()
+                        .position(myCoordinates)
+                        .title("End location"));
+
+                //Stops location updates when the button is pressed
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, TrackingActivity.this);
+            }
+        });
+
     }
 
 
@@ -130,6 +153,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        //Adds marker on map from onCreate
         LocationMarker = mMap.addMarker(mOptions);
 
         //Initialize Google Play Services
@@ -161,7 +185,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     public void onConnected(Bundle bundle) {
         //Used to get an accurate location of the device
         userLocationRequest = new LocationRequest();
-        //Requests the location every second
+        //Requests the location every five seconds
         userLocationRequest.setInterval(5000);
         userLocationRequest.setFastestInterval(5000);
         userLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -182,9 +206,10 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     //Handles location, sets marker onto location
     @Override
     public void onLocationChanged(final Location location) {
-
         //Adds a marker on the current position found in LatLng
-        final LatLng myCoordinates = new LatLng(location.getLatitude(), location.getLongitude());
+        myCoordinates = new LatLng(location.getLatitude(), location.getLongitude());
+
+        //Sets the marker to the position of LatLng and zooms the camera in on the location
         LocationMarker.setPosition(myCoordinates);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myCoordinates));
         float zoomLevel = 12.0f;
@@ -192,30 +217,12 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
         //Adds marker on each location update
         points.add(myCoordinates);
-        mMap.addMarker(new MarkerOptions().position(myCoordinates));
 
-            mMap.addPolyline(new PolylineOptions()
-                    .addAll(points)
-                    .width(5)
-                    .color(Color.RED));
-
-        //Button used to get and display ending location
-        Button stopLocBtn;
-        stopLocBtn = (Button) findViewById(R.id.stopLocBtn);
-        stopLocBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final LatLng myendCoordinates = new LatLng(location.getLatitude(), location.getLongitude());
-                points.add(myendCoordinates);
-
-                LocationMarker.setPosition(myendCoordinates);
-                mMap.addMarker(new MarkerOptions()
-                        .position(myendCoordinates)
-                        .title("End location"));
-
-                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, TrackingActivity.this);
-            }
-        });
+        //Draws a polyline between the location updates stored in points.
+        mMap.addPolyline(new PolylineOptions()
+                .addAll(points)
+                .width(5)
+                .color(Color.RED));
     }
 
     @Override
@@ -315,8 +322,6 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         //Button to stop journey
         final Button stopBtn;
         stopBtn = (Button) findViewById(R.id.stopBtn);
-
-
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

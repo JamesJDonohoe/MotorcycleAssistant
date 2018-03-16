@@ -16,8 +16,6 @@ import android.widget.TextView;
 
 public class StatActivity extends Activity{
 
-    TextView baValue ;
-    TextView cornerVal;
     ImageView starView;
     ImageView starView2;
 
@@ -30,9 +28,6 @@ public class StatActivity extends Activity{
         //gets data being sent from TackingActivity
         Intent intent = getIntent();
 
-        baValue = (TextView) findViewById(R.id.baValue);
-        cornerVal = (TextView) findViewById(R.id.cornerVal);
-
         //Displays braking and acceleration star rating
         starView = (ImageView) findViewById(R.id.starView);
         String sVal = intent.getExtras().get("staryzVal").toString();
@@ -42,14 +37,6 @@ public class StatActivity extends Activity{
         starView2 = (ImageView) findViewById(R.id.starView2);
         String sVal2 = intent.getExtras().get("starxVal").toString();
         starView2.setImageResource(Integer.parseInt(sVal2));
-
-        //this gets the data and assigns it to a new variable to be used for the setText
-        String baVal = intent.getExtras().get("yzValue").toString();
-        String cValue = intent.getExtras().get("xValue").toString();
-
-        //this sets the text of the text view from the values in the variables
-        baValue.setText(String.valueOf(baVal));
-        cornerVal.setText(String.valueOf(cValue));
 
         //If user clicks on the value for braking it will pop up with an info page
         starView.setOnClickListener(new View.OnClickListener() {

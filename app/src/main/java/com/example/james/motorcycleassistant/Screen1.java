@@ -17,7 +17,7 @@ import android.widget.TextView;
 public class Screen1 extends AppCompatActivity {
 
     final Context context = this;
-    Boolean dialogShown;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +43,14 @@ public class Screen1 extends AppCompatActivity {
         alertDialogBuilder
                 .setMessage("Open the tutorial?")
                 .setCancelable(false)
-                .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
-
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent (Screen1.this, TutorialActivity.class);
+                        startActivity(intent);
                     }
                 })
-                .setNegativeButton("Skip",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
+                .setNegativeButton("Skip", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
                         //skips the tutorial
                         dialog.cancel();
                     }

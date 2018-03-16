@@ -44,6 +44,7 @@
             android:label="@string/title_activity_tracking" />
         <activity android:name=".StatActivity" />
         <activity android:name=".BrakingInfoActivity" />
+        <activity android:name=".TutorialActivity"></activity>
     </application>
 
 </manifest>
