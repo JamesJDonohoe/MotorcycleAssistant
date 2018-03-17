@@ -52,6 +52,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import static com.example.james.motorcycleassistant.R.id.avgSpeed;
 import static com.example.james.motorcycleassistant.R.id.map;
 import static com.example.james.motorcycleassistant.R.id.speed_text;
 
@@ -94,7 +95,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     long startTime = 0;
 
     private TextView speedText;
-    
+
     //Handler for timer
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
@@ -127,7 +128,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         startTime = System.currentTimeMillis();
         timerHandler.postDelayed(timerRunnable, 0);
 
-        //Get speed text
+        //Sets the text of speed_text and changes when location updated
         speedText = (TextView)findViewById(R.id.speed_text);
         speedText.setText("...");
 
