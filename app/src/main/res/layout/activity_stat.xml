@@ -16,7 +16,7 @@
         android:layout_gravity="center"
         android:text="How was your journey?"
         android:textColor="@color/textColor"
-        android:textSize="36sp"
+        android:textSize="34sp"
         android:textStyle="bold"
         tools:ignore="HardcodedText"
         android:layout_marginBottom="20dp"/>
@@ -60,4 +60,55 @@
             android:layout_width="350dp"
             android:layout_height="80dp" />
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:id="@+id/titleTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:text="Journey Time - "
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/avgSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:text="Average Speed"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/avgSpeedTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textSize="15sp" />
+    </LinearLayout>
 </LinearLayout>

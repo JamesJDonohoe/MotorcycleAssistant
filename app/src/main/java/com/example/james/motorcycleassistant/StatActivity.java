@@ -7,18 +7,20 @@ package com.example.james.motorcycleassistant;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
 
 
 public class StatActivity extends Activity{
 
     ImageView starView;
     ImageView starView2;
-
+    TextView time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +29,11 @@ public class StatActivity extends Activity{
 
         //gets data being sent from TackingActivity
         Intent intent = getIntent();
+
+        //Gets the time from TrackingActivity and sets the TextView to it
+        time = (TextView)findViewById(R.id.time);
+        String timeVal = intent.getStringExtra("timerTxt");
+        time.setText(timeVal);
 
         //Displays braking and acceleration star rating
         starView = (ImageView) findViewById(R.id.starView);

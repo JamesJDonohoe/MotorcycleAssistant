@@ -20,10 +20,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -32,6 +31,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -39,7 +39,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -48,12 +47,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import static com.example.james.motorcycleassistant.R.id.map;
+import static com.example.james.motorcycleassistant.R.id.speed_text;
 
 public class TrackingActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -89,6 +89,30 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     //Making myCoordinates Global
     LatLng myCoordinates;
 
+    //Variables for timers
+    TextView timerTextView;
+    long startTime = 0;
+
+    private TextView speedText;
+    
+    //Handler for timer
+    Handler timerHandler = new Handler();
+    Runnable timerRunnable = new Runnable() {
+
+        @SuppressLint("DefaultLocale")
+        @Override
+        public void run() {
+            long millis = System.currentTimeMillis() - startTime;
+            int seconds = (int) (millis / 1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+
+            timerTextView.setText(String.format("%d:%02d", minutes, seconds));
+
+            timerHandler.postDelayed(this, 500);
+        }
+    };
+
     //Builds the map using the map fragment
     @SuppressLint("WrongViewCast")
     @Override
@@ -97,6 +121,15 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         setContentView(R.layout.activity_tracking);
         //Allows screen to stay on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        //Starts timer on top of map
+        timerTextView = (TextView) findViewById(R.id.timerTextView);
+        startTime = System.currentTimeMillis();
+        timerHandler.postDelayed(timerRunnable, 0);
+
+        //Get speed text
+        speedText = (TextView)findViewById(R.id.speed_text);
+        speedText.setText("...");
 
         //Checks to see if the sensor is available on the device
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -131,6 +164,9 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         stopLocBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //When button is pressed timer will stop
+                timerHandler.removeCallbacks(timerRunnable);
+
                 //Adds points to myCoordinates
                 points.add(myCoordinates);
 
@@ -142,9 +178,12 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
                 //Stops location updates when the button is pressed
                 LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, TrackingActivity.this);
+
+                //Stops the accelerometer from detecting movements when users is finished
+                sensorManager.unregisterListener(TrackingActivity.this, accelerometer);
+
             }
         });
-
     }
 
 
@@ -204,6 +243,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     }
 
     //Handles location, sets marker onto location
+    @SuppressLint("DefaultLocale")
     @Override
     public void onLocationChanged(final Location location) {
         //Adds a marker on the current position found in LatLng
@@ -223,6 +263,9 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
                 .addAll(points)
                 .width(5)
                 .color(Color.RED));
+
+        //gets speed from Location and converts it to Km/h
+        speedText.setText(String.format("%.0f - Km/h", location.getSpeed() * 3.6));
     }
 
     @Override
@@ -327,6 +370,9 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
             public void onClick(View v) {
                 Intent intent = new Intent(TrackingActivity.this, StatActivity.class);
 
+                //Gets text and sends it to Stat Activity
+                intent.putExtra("timerTxt", timerTextView.getText());
+
                 //When the stop button is clicked the service will stop
                 //When button is pressed it will start a new activity but also send the value of the x/ y counter with it
                 intent.putExtra("yzValue" , getyzVal());
@@ -345,6 +391,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
                 }
                 //Starts the new activity
                 startActivity(intent);
+                finish();
             }
         });
 
