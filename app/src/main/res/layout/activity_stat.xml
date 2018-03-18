@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="@mipmap/background_1"
+    android:background="@color/colorBack"
     android:gravity="center"
     android:orientation="vertical"
     android:paddingTop="20dp">
@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="This is how many times you broke too hard"
+        android:text="How was your braking?"
         android:textColor="@color/textColor"
         android:textSize="19sp"
         tools:ignore="HardcodedText" />
@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:paddingTop="50dp"
-        android:text="This is how many times you cornered too fast"
+        android:text="How was your cornering?"
         android:textColor="@color/textColor"
         android:textSize="19sp"
         tools:ignore="HardcodedText" />
@@ -73,7 +73,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:text="Journey Time - "
-            android:textColor="@android:color/black"
+            android:textColor="@color/textColor"
             android:textSize="15sp"
             tools:ignore="HardcodedText" />
 
@@ -85,7 +85,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp"
             android:text=""
-            android:textColor="@android:color/black"
+            android:textColor="@color/textColor"
             android:textSize="15sp" />
 
         <TextView
@@ -96,7 +96,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp"
             android:text="Average Speed"
-            android:textColor="@android:color/black"
+            android:textColor="@color/textColor"
             android:textSize="15sp"
             tools:ignore="HardcodedText" />
 
@@ -108,7 +108,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp"
             android:text=""
-            android:textColor="@android:color/black"
+            android:textColor="@color/textColor"
             android:textSize="15sp" />
     </LinearLayout>
     <RelativeLayout
