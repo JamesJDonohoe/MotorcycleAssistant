@@ -147,8 +147,8 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         }
 
         //Displays Starting Marker on LatLng
-        mOptions = new MarkerOptions().position(new LatLng(0, 0)).title("Starting Location")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        mOptions = new MarkerOptions().position(new LatLng(0, 0)).title("End Location")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
 
         //Checks SDK version
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -259,6 +259,11 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         //Adds marker on each location update
         points.add(myCoordinates);
 
+        //Adds a marker at the first coordinate in the array which is always a starting location
+        mMap.addMarker(new MarkerOptions().position(points.get(0))
+                .title("Starting Location")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+
         //Draws a polyline between the location updates stored in points.
         mMap.addPolyline(new PolylineOptions()
                 .addAll(points)
@@ -267,7 +272,9 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
         //gets speed from Location and converts it to Km/h
         speedText.setText(String.format("%.0f - Km/h", location.getSpeed() * 3.6));
+
     }
+
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

@@ -110,13 +110,13 @@ public class StatActivity extends Activity {
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
             // set the type to 'email'
             emailIntent .setType("vnd.android.cursor.dir/email");
-            String to[] = {"james.j.donohoe@outlook.com"};
+            String to[] = {"Enter your email address"};
             emailIntent .putExtra(Intent.EXTRA_EMAIL, to);
             // the attachment
             emailIntent .putExtra(Intent.EXTRA_STREAM, path);
             // the mail subject
-            emailIntent .putExtra(Intent.EXTRA_SUBJECT, "Subject");
-            startActivity(Intent.createChooser(emailIntent , "Send email..."));
+            emailIntent .putExtra(Intent.EXTRA_SUBJECT, "Journey : ");
+            startActivity(Intent.createChooser(emailIntent , "Select your preferred email app.."));
 
 
         } catch (Throwable e) {
