@@ -16,6 +16,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -80,17 +82,17 @@ public class StatActivity extends Activity {
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                takeScreenshot_and_send_email();
+                sendScreen();
             }
         });
     }
-    private void takeScreenshot_and_send_email() {
+    private void sendScreen() {
         Date now = new Date();
         android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
 
         try {
             // image naming and path  to include sd card  appending name you choose for file
-            String mPath = Environment.getExternalStorageDirectory().toString() + "/" + now + ".jpg";
+            String mPath = Environment.getExternalStorageDirectory().toString() + "/" + now + ".png";
 
             // create bitmap screen capture
             View v1 = getWindow().getDecorView().getRootView();
@@ -102,20 +104,21 @@ public class StatActivity extends Activity {
 
             FileOutputStream outputStream = new FileOutputStream(imageFile);
             int quality = 100;
-            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+            bitmap.compress(Bitmap.CompressFormat.PNG, quality, outputStream);
             outputStream.flush();
             outputStream.close();
-            File filelocation = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), mPath);
-            Uri path = Uri.fromFile(filelocation);
-            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+            File filelocation = new File(MediaStore.Images.Media.DATA  + mPath);
+            Uri myUri = Uri.parse("file://" + filelocation);
+            final Intent emailIntent = new Intent(Intent.ACTION_SEND);
             // set the type to 'email'
             emailIntent .setType("vnd.android.cursor.dir/email");
             String to[] = {"Enter your email address"};
             emailIntent .putExtra(Intent.EXTRA_EMAIL, to);
             // the attachment
-            emailIntent .putExtra(Intent.EXTRA_STREAM, path);
+            emailIntent.putExtra(Intent.EXTRA_STREAM, myUri);
             // the mail subject
-            emailIntent .putExtra(Intent.EXTRA_SUBJECT, "Journey : ");
+            emailIntent .putExtra(Intent.EXTRA_SUBJECT, "Journey : " + now );
             startActivity(Intent.createChooser(emailIntent , "Select your preferred email app.."));
 
 

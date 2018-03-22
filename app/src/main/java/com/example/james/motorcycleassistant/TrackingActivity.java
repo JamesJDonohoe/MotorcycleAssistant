@@ -49,10 +49,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import static com.example.james.motorcycleassistant.R.id.avgSpeed;
+import static com.example.james.motorcycleassistant.R.id.all;
 import static com.example.james.motorcycleassistant.R.id.map;
 import static com.example.james.motorcycleassistant.R.id.speed_text;
 
@@ -267,14 +266,13 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         //Draws a polyline between the location updates stored in points.
         mMap.addPolyline(new PolylineOptions()
                 .addAll(points)
-                .width(5)
+                .width(8)
                 .color(Color.RED));
 
         //gets speed from Location and converts it to Km/h
         speedText.setText(String.format("%.0f - Km/h", location.getSpeed() * 3.6));
 
     }
-
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -362,7 +360,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         lastZ = event.values[2];
 
         //Left and right / Cornering
-        if(deltaX >=5 || deltaX <= -5){
+        if(deltaX >=8 || deltaX <= -8){
             xCounter++;
         }
         //Up and down / Breaking and acceleration

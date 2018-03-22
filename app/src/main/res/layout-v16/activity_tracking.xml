@@ -3,7 +3,8 @@
     android:orientation="vertical"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:keepScreenOn="true">
+    android:keepScreenOn="true"
+    android:background="@color/colorBack">
 
     <TextView
         android:id="@+id/timerTextView"
@@ -12,7 +13,8 @@
         android:gravity="center"
         android:text="TextView"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="@color/textColor"/>
 
     <TextView
         android:id="@+id/speed_text"
@@ -20,7 +22,8 @@
         android:layout_height="wrap_content"
         android:text="TextView"
         android:gravity="center"
-        android:textSize="20dp"/>
+        android:textSize="20dp"
+        android:textColor="@color/textColor"/>
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
