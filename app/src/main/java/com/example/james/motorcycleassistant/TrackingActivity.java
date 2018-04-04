@@ -225,8 +225,8 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         //Used to get an accurate location of the device
         userLocationRequest = new LocationRequest();
         //Requests the location every five seconds
-        userLocationRequest.setInterval(5000);
-        userLocationRequest.setFastestInterval(5000);
+        userLocationRequest.setInterval(1000);
+        userLocationRequest.setFastestInterval(1000);
         userLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION)

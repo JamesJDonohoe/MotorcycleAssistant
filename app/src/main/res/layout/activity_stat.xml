@@ -120,8 +120,10 @@
             android:layout_width="200dp"
             android:layout_height="50dp"
             android:text="Email Feedback"
+            android:textColor="@color/textColor"
             android:textSize="20sp"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText"
+            android:background="@drawable/rectangle"/>
 
     </RelativeLayout>
 </LinearLayout>

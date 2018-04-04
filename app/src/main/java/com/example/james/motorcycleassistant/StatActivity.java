@@ -36,11 +36,13 @@ import java.io.IOException;
 import java.util.Date;
 
 
+
 public class StatActivity extends Activity {
 
     ImageView starView, starView2;
     TextView time, avgSpeedText;
     Button shareBtn;
+    String brakingVal, cornerVal, sVal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,11 @@ public class StatActivity extends Activity {
 
         //gets data being sent from TackingActivity
         Intent intent = getIntent();
+
+        //getting braking info from Tracking Activity
+        brakingVal = intent.getExtras().get("xValue").toString();
+        //getting cornering info from Tracking Activity
+        cornerVal = intent.getExtras().get("yzValue").toString();
 
         avgSpeedText = (TextView) findViewById(R.id.avgSpeedTxt);
         String avgVal = intent.getStringExtra("avgSpeed");
@@ -61,7 +68,7 @@ public class StatActivity extends Activity {
 
         //Displays braking and acceleration star rating
         starView = (ImageView) findViewById(R.id.starView);
-        String sVal = intent.getExtras().get("staryzVal").toString();
+        sVal = intent.getExtras().get("staryzVal").toString();
         starView.setImageResource(Integer.parseInt((sVal)));
 
         //Displays cornering star rating
@@ -74,6 +81,14 @@ public class StatActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(StatActivity.this, BrakingInfoActivity.class);
+
+                //getting braking value from brakingVal and sending it to BrakingInfoActivity
+                intent.putExtra("xValueStat", brakingVal);
+                intent.putExtra("yzValueStat", cornerVal);
+
+                //sending star value to BrakingInfo
+                intent.putExtra("brakingStar", sVal);
+
                 startActivity(intent);
             }
         });//end of on click listener

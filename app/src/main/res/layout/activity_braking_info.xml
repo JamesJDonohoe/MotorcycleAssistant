@@ -1,17 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.james.motorcycleassistant.BrakingInfoActivity">
+    tools:context="com.example.james.motorcycleassistant.BrakingInfoActivity"
+    android:background="@color/colorBack">
 
-    <ImageView
-        android:id="@+id/imageView3"
+    <TextView
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/brakinginfo"
-        tools:layout_editor_absoluteX="25dp"
-        tools:layout_editor_absoluteY="0dp"
-        tools:ignore="MissingConstraints" />
-</android.support.constraint.ConstraintLayout>
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="44dp"
+        android:text="Here are your Stats"
+        android:textColor="@color/textColor"
+        android:textSize="34sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/starViewStat"
+        android:layout_width="350dp"
+        android:layout_height="80dp"
+        android:layout_below="@+id/textView3"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="34sp" />
+
+    <TextView
+        android:id="@+id/brakingStat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/starViewStat"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textColor="@color/textColor"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>
