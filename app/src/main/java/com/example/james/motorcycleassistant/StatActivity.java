@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -42,7 +43,7 @@ public class StatActivity extends Activity {
     ImageView starView, starView2;
     TextView time, avgSpeedText;
     Button shareBtn;
-    String brakingVal, cornerVal, sVal;
+    String brakingVal, cornerVal, sVal, sVal2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,7 @@ public class StatActivity extends Activity {
 
         //Displays cornering star rating
         starView2 = (ImageView) findViewById(R.id.starView2);
-        String sVal2 = intent.getExtras().get("starxVal").toString();
+        sVal2 = intent.getExtras().get("starxVal").toString();
         starView2.setImageResource(Integer.parseInt(sVal2));
 
         //If user clicks on the value for braking it will pop up with an info page
@@ -84,7 +85,6 @@ public class StatActivity extends Activity {
 
                 //getting braking value from brakingVal and sending it to BrakingInfoActivity
                 intent.putExtra("xValueStat", brakingVal);
-                intent.putExtra("yzValueStat", cornerVal);
 
                 //sending star value to BrakingInfo
                 intent.putExtra("brakingStar", sVal);
@@ -92,6 +92,21 @@ public class StatActivity extends Activity {
                 startActivity(intent);
             }
         });//end of on click listener
+
+        starView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StatActivity.this, CornerInfoActivity.class);
+
+                //getting cornering value from cornerVal and sending it to CornerInfoActivity
+                intent.putExtra("yzValueStat", cornerVal);
+
+                //sending star value from CornerInfo
+                intent.putExtra("cornerStar", sVal2);
+
+                startActivity(intent);
+            }
+        });
 
         shareBtn = (Button) findViewById(R.id.shareBtn);
         shareBtn.setOnClickListener(new View.OnClickListener() {
@@ -125,7 +140,7 @@ public class StatActivity extends Activity {
 
             File filelocation = new File(MediaStore.Images.Media.DATA  + mPath);
             Uri myUri = Uri.parse("file://" + filelocation);
-            final Intent emailIntent = new Intent(Intent.ACTION_SEND);
+            Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
             // set the type to 'email'
             emailIntent .setType("vnd.android.cursor.dir/email");
             String to[] = {"Enter your email address"};
