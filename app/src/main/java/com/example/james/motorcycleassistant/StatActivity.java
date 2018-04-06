@@ -29,6 +29,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.fitness.request.GetFileUriRequest;
+
 import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -150,7 +152,6 @@ public class StatActivity extends Activity {
             // the mail subject
             emailIntent .putExtra(Intent.EXTRA_SUBJECT, "Journey : " + now );
             startActivity(Intent.createChooser(emailIntent , "Select your preferred email app.."));
-
 
         } catch (Throwable e) {
             // Several error may come out with file handling or DOM

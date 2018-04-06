@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -18,6 +19,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
@@ -32,7 +34,10 @@ public class Screen1 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen1);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        //This will check and see if wifi and location are enabled
+        //If they are turned off it'll prompt the user to go into settings and turn them on
         LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
         boolean gps_enabled = false;
         boolean network_enabled = false;
@@ -94,15 +99,65 @@ public class Screen1 extends AppCompatActivity {
             dialog.show();
         }
 
+        //When user presses the button a dialog will be displayed, if the user presses yes it will
+        //start tracking them after one minute. This allows the user to get ready without false readings
         //Start button to start tracking
         Button startbtn;
         startbtn = (Button) findViewById(R.id.startbtn);
         startbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Brings user to a new activity
-                Intent intent = new Intent(Screen1.this, TrackingActivity.class);
-                startActivity(intent);
+
+                AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+                dialog.setMessage("Tracking will start in 60 seconds");
+                dialog.setPositiveButton("Track Journey", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        // TODO Auto-generated method stub
+
+                        Toast.makeText(getApplicationContext(), "We will track your journey in 60 seconds", Toast.LENGTH_LONG).show();
+
+                        //Brings user to a new activity
+                        Handler mHandler = new Handler();
+                        mHandler.postDelayed(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(Screen1.this, TrackingActivity.class);
+                                Toast.makeText(getApplicationContext(), "Your Journey will now be tracked", Toast.LENGTH_LONG).show();
+                                startActivity(intent);
+                            }
+
+                            //6000 milliseconds = 1 minute
+                        }, 60000L);
+                    }
+                });
+                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        // TODO Auto-generated method stub
+                        //Dialog for the option of the tutorial
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                        // set title
+                        // set dialog message
+                        alertDialogBuilder
+
+                                .setNegativeButton("Skip", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //skips the tutorial
+                                        dialog.cancel();
+                                    }
+                                });
+
+                        // create alert dialog
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+
+                        // show it
+                        alertDialog.show();
+                    }
+                });
+                dialog.show();
             }
         });
 

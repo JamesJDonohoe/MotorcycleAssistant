@@ -18,7 +18,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".SplashScreen"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,7 +28,8 @@
         </activity>
         <activity
             android:name=".Screen1"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait"/>
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -43,11 +45,22 @@
 
         <activity
             android:name=".TrackingActivity"
-            android:label="@string/title_activity_tracking" />
-        <activity android:name=".StatActivity" />
-        <activity android:name=".BrakingInfoActivity" />
-        <activity android:name=".TutorialActivity" />
-        <activity android:name=".CornerInfoActivity"></activity>
+            android:label="@string/title_activity_tracking"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".StatActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".BrakingInfoActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".TutorialActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".CornerInfoActivity"
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>

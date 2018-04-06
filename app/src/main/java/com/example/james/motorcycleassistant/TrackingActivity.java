@@ -28,6 +28,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -48,12 +49,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.vision.barcode.Barcode;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 
-import static com.example.james.motorcycleassistant.R.id.all;
 import static com.example.james.motorcycleassistant.R.id.map;
-import static com.example.james.motorcycleassistant.R.id.speed_text;
 
 public class TrackingActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -184,6 +186,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
             }
         });
+
     }
 
 
@@ -389,6 +392,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
                 //Gets yzCounter from sendyzCounterStars and returns star based on XCounter value
                 intent.putExtra("staryzVal", sendyzCounterStars());
+
 
                 //If both cornering and acceleration/ braking is 5 star a toast message will be displayed
                 if (sendxCounterStars() == fiveStar && sendyzCounterStars() == fiveStar)
