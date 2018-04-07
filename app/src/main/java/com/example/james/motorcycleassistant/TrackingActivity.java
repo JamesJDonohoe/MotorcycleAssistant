@@ -377,12 +377,14 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Toast.makeText(getApplicationContext(), "Press on the stars to get more details on your journey", Toast.LENGTH_LONG).show();
+
                 Intent intent = new Intent(TrackingActivity.this, StatActivity.class);
 
                 //Gets text and sends it to Stat Activity
                 intent.putExtra("timerTxt", timerTextView.getText());
 
-                //When the stop button is clicked the service will stop
                 //When button is pressed it will start a new activity but also send the value of the x/ y counter with it
                 intent.putExtra("yzValue" , getyzVal());
                 intent.putExtra("xValue", getxVal());
@@ -397,7 +399,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
                 //If both cornering and acceleration/ braking is 5 star a toast message will be displayed
                 if (sendxCounterStars() == fiveStar && sendyzCounterStars() == fiveStar)
                 {
-                    Toast.makeText(getApplicationContext(), "You had a perfect drive, well done!!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "You had a perfect drive, well done!!", Toast.LENGTH_SHORT).show();
                 }
                 //Starts the new activity
                 startActivity(intent);

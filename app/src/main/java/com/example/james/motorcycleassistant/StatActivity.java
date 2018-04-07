@@ -79,7 +79,7 @@ public class StatActivity extends Activity {
         sVal2 = intent.getExtras().get("starxVal").toString();
         starView2.setImageResource(Integer.parseInt(sVal2));
 
-        //If user clicks on the value for braking it will pop up with an info page
+        //If user clicks on the star for braking it will pop up with an info page
         starView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,6 +95,7 @@ public class StatActivity extends Activity {
             }
         });//end of on click listener
 
+        //When user presses on the cornering star they will be brought to a new activity with more details
         starView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,6 +111,7 @@ public class StatActivity extends Activity {
             }
         });
 
+        //When the user presses the share button it calls the sendScreen function
         shareBtn = (Button) findViewById(R.id.shareBtn);
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,6 +120,7 @@ public class StatActivity extends Activity {
             }
         });
     }
+    //Function that automatically takes a screenshot and attaches to an email so the user can send it
     private void sendScreen() {
         Date now = new Date();
         android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -51,7 +52,7 @@ public class Screen1 extends AppCompatActivity {
         } catch(Exception ex) {}
 
         if(!gps_enabled && !network_enabled) {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+            AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.alertDialog);
             dialog.setMessage("Network and Location are not enabled");
             dialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
                 @Override
@@ -69,7 +70,7 @@ public class Screen1 extends AppCompatActivity {
                     // TODO Auto-generated method stub
 
                     //Dialog for the option of the tutorial
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context, R.style.alertDialog);
                     // set title
                     alertDialogBuilder.setTitle("Learn what the app does and how to use it");
                     // set dialog message
@@ -107,13 +108,12 @@ public class Screen1 extends AppCompatActivity {
         startbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(Screen1.this, R.style.alertDialog);
+                builder.setMessage("We will start tracking your journey in 60 seconds");
 
-                AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-                dialog.setMessage("Tracking will start in 60 seconds");
-                dialog.setPositiveButton("Track Journey", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("Track Journey", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        // TODO Auto-generated method stub
+                    public void onClick(DialogInterface dialog, int which) {
 
                         Toast.makeText(getApplicationContext(), "We will track your journey in 60 seconds", Toast.LENGTH_LONG).show();
 
@@ -132,34 +132,21 @@ public class Screen1 extends AppCompatActivity {
                         }, 60000L);
                     }
                 });
-                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        // TODO Auto-generated method stub
-                        //Dialog for the option of the tutorial
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-                        // set title
-                        // set dialog message
-                        alertDialogBuilder
-
-                                .setNegativeButton("Skip", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        //skips the tutorial
-                                        dialog.cancel();
-                                    }
-                                });
-
-                        // create alert dialog
-                        AlertDialog alertDialog = alertDialogBuilder.create();
-
-                        // show it
-                        alertDialog.show();
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
                     }
                 });
-                dialog.show();
+
+                //creating alert dialog
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                //alertDialog.getWindow().setBackgroundDrawableResource(R.color.colorBack);
             }
         });
+
 
     }
 
