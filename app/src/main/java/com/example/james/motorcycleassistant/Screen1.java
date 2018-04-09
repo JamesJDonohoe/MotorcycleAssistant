@@ -101,6 +101,8 @@ public class Screen1 extends AppCompatActivity {
             dialog.show();
         }
 
+
+
         //When user presses the button a dialog will be displayed, if the user presses yes it will
         //start tracking them after one minute. This allows the user to get ready without false readings
         //Start button to start tracking
@@ -116,9 +118,16 @@ public class Screen1 extends AppCompatActivity {
                     @SuppressLint("ResourceAsColor")
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        startbtn.setBackgroundColor(R.color.btnGrey);
-                        startbtn.setOnClickListener(null);
-
+                        //When button is already pressed the listener will be set to null and the user will be told
+                        //button has been pressed
+                        startbtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(getApplicationContext(), "Button already pressed, " +
+                                        "journey will be tracked shortly", Toast.LENGTH_LONG).show();
+                                startbtn.setOnClickListener(null);
+                            }
+                        });
                         Toast.makeText(getApplicationContext(), "We will track your journey in 60 seconds", Toast.LENGTH_LONG).show();
 
                         //Brings user to a new activity
@@ -133,7 +142,7 @@ public class Screen1 extends AppCompatActivity {
                             }
 
                             //6000 milliseconds = 1 minute
-                        }, 1000L );//60000L);
+                        }, 2000L );//60000L);
                     }
                 });
 

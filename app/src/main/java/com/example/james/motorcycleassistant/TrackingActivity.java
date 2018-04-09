@@ -92,6 +92,8 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     //Making myCoordinates Global
     LatLng myCoordinates;
 
+    double disKilom;
+
     //Variables for timers
     TextView timerTextView;
     long startTime = 0;
@@ -282,16 +284,22 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     @SuppressLint("DefaultLocale")
     private double getDistance(){
 
-        //Uses computeLenght to calculate the distance in meters from my Array of points
+        //Uses computeLength to calculate the distance in meters from my Array of points
         double meters = SphericalUtil.computeLength(points);
 
         //Divides by a 1000 to get meters
-        double disKilom = meters / 1000;
+        disKilom = meters / 1000;
 
         //Rounds it to 2 decimal places
         return Double.parseDouble(String.format("%.2f", disKilom));
 
     }
+
+    //Uses basic average speed formula distance over time to calculate average speed
+    private int avgSpeed(){
+        return (int) (disKilom / startTime);
+    }
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
@@ -397,6 +405,10 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
                 Intent intent = new Intent(TrackingActivity.this, StatActivity.class);
 
+                //Gets average speed from avgSpeed and sends it to Stat Activity
+                intent.putExtra("AvgSpeed", avgSpeed());
+
+                //Gets distance and sends it to Stat Activity
                 intent.putExtra("getDistance", getDistance());
 
                 //Gets text and sends it to Stat Activity

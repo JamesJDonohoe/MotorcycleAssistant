@@ -66,7 +66,7 @@ public class StatActivity extends Activity {
 
         //Gets average speed from TrackingActivity and sets text to the value
         avgSpeedText = (TextView) findViewById(R.id.avgSpeedTxt);
-        String avgVal = intent.getStringExtra("AvgSpeed");
+        String avgVal = intent.getExtras().get("AvgSpeed").toString();
         avgSpeedText.setText(avgVal);
 
         //Gets the time from TrackingActivity and sets the TextView to it
