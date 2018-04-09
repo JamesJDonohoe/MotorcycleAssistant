@@ -6,4 +6,5 @@
     <color name="textColor">#ffffff</color>
     <color name="colorBack">#08065b</color>
     <color name="colorBG">#232a34</color>
+    <color name="btnGrey">#000000</color>
 </resources>

@@ -43,7 +43,7 @@ import java.util.Date;
 public class StatActivity extends Activity {
 
     ImageView starView, starView2;
-    TextView time, avgSpeedText;
+    TextView time, avgSpeedText, disText;
     Button shareBtn;
     String brakingVal, cornerVal, sVal, sVal2;
 
@@ -60,8 +60,13 @@ public class StatActivity extends Activity {
         //getting cornering info from Tracking Activity
         cornerVal = intent.getExtras().get("yzValue").toString();
 
+        disText = (TextView)findViewById(R.id.disText);
+        String disVal = intent.getExtras().get("getDistance").toString();
+        disText.setText(disVal);
+
+        //Gets average speed from TrackingActivity and sets text to the value
         avgSpeedText = (TextView) findViewById(R.id.avgSpeedTxt);
-        String avgVal = intent.getStringExtra("avgSpeed");
+        String avgVal = intent.getStringExtra("AvgSpeed");
         avgSpeedText.setText(avgVal);
 
         //Gets the time from TrackingActivity and sets the TextView to it

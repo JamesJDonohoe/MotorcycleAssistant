@@ -1,5 +1,6 @@
 package com.example.james.motorcycleassistant;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -103,7 +104,7 @@ public class Screen1 extends AppCompatActivity {
         //When user presses the button a dialog will be displayed, if the user presses yes it will
         //start tracking them after one minute. This allows the user to get ready without false readings
         //Start button to start tracking
-        Button startbtn;
+        final Button startbtn;
         startbtn = (Button) findViewById(R.id.startbtn);
         startbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,8 +113,11 @@ public class Screen1 extends AppCompatActivity {
                 builder.setMessage("We will start tracking your journey in 60 seconds");
 
                 builder.setPositiveButton("Track Journey", new DialogInterface.OnClickListener() {
+                    @SuppressLint("ResourceAsColor")
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        startbtn.setBackgroundColor(R.color.btnGrey);
+                        startbtn.setOnClickListener(null);
 
                         Toast.makeText(getApplicationContext(), "We will track your journey in 60 seconds", Toast.LENGTH_LONG).show();
 
@@ -129,7 +133,7 @@ public class Screen1 extends AppCompatActivity {
                             }
 
                             //6000 milliseconds = 1 minute
-                        }, 60000L);
+                        }, 1000L );//60000L);
                     }
                 });
 
@@ -143,7 +147,6 @@ public class Screen1 extends AppCompatActivity {
                 //creating alert dialog
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
-                //alertDialog.getWindow().setBackgroundDrawableResource(R.color.colorBack);
             }
         });
 

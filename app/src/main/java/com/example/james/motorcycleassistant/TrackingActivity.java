@@ -50,6 +50,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.maps.android.SphericalUtil;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -183,7 +184,6 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
                 //Stops the accelerometer from detecting movements when users is finished
                 sensorManager.unregisterListener(TrackingActivity.this, accelerometer);
-
             }
         });
 
@@ -277,6 +277,21 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
     }
 
+
+    //Gets start and end location and calculates distance between them
+    @SuppressLint("DefaultLocale")
+    private double getDistance(){
+
+        //Uses computeLenght to calculate the distance in meters from my Array of points
+        double meters = SphericalUtil.computeLength(points);
+
+        //Divides by a 1000 to get meters
+        double disKilom = meters / 1000;
+
+        //Rounds it to 2 decimal places
+        return Double.parseDouble(String.format("%.2f", disKilom));
+
+    }
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
@@ -381,6 +396,8 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
                 Toast.makeText(getApplicationContext(), "Press on the stars to get more details on your journey", Toast.LENGTH_LONG).show();
 
                 Intent intent = new Intent(TrackingActivity.this, StatActivity.class);
+
+                intent.putExtra("getDistance", getDistance());
 
                 //Gets text and sends it to Stat Activity
                 intent.putExtra("timerTxt", timerTextView.getText());
