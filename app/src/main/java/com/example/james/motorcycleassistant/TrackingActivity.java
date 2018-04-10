@@ -93,6 +93,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     LatLng myCoordinates;
 
     double disKilom;
+    double meters;
 
     //Variables for timers
     TextView timerTextView;
@@ -167,6 +168,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         Button stopLocBtn;
         stopLocBtn = (Button) findViewById(R.id.stopLocBtn);
         stopLocBtn.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
                 //When button is pressed timer will stop
@@ -186,6 +188,9 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
                 //Stops the accelerometer from detecting movements when users is finished
                 sensorManager.unregisterListener(TrackingActivity.this, accelerometer);
+
+                Toast.makeText(getApplicationContext(), "Journey Tracking has Stopped", Toast.LENGTH_LONG).show();
+                speedText.setText("0 - Km/h");
             }
         });
 
@@ -285,7 +290,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     private double getDistance(){
 
         //Uses computeLength to calculate the distance in meters from my Array of points
-        double meters = SphericalUtil.computeLength(points);
+        meters = SphericalUtil.computeLength(points);
 
         //Divides by a 1000 to get meters
         disKilom = meters / 1000;
@@ -297,7 +302,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
     //Uses basic average speed formula distance over time to calculate average speed
     private int avgSpeed(){
-        return (int) (disKilom / startTime);
+        return (int) (disKilom % startTime);
     }
 
     @Override
@@ -432,7 +437,6 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
                 }
                 //Starts the new activity
                 startActivity(intent);
-                finish();
             }
         });
 

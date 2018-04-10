@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_height="match_parent"
@@ -10,11 +10,9 @@
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="600dp"
+        android:layout_height="match_parent"
         tools:context="com.example.james.motorcycleassistant.TrackingActivity" />
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+
     <Button
         android:id="@+id/stopBtn"
         android:layout_width="500dp"
@@ -30,5 +28,5 @@
         android:layout_height="60dp"
         android:text="Finished Journey"
         tools:ignore="HardcodedText" />
-</LinearLayout>
-</LinearLayout>
+
+</FrameLayout>

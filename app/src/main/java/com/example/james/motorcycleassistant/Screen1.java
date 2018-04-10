@@ -139,6 +139,7 @@ public class Screen1 extends AppCompatActivity {
                                 Intent intent = new Intent(Screen1.this, TrackingActivity.class);
                                 Toast.makeText(getApplicationContext(), "Your Journey will now be tracked", Toast.LENGTH_LONG).show();
                                 startActivity(intent);
+                                finish();
                             }
 
                             //6000 milliseconds = 1 minute
