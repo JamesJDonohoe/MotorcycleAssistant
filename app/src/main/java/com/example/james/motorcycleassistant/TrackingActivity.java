@@ -63,6 +63,9 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener, SensorEventListener {
 
+    //Gives access to the database
+    public static DBHelper myDb;
+
     //Variables for the accelerometer sensor
     private float lastX, lastY, lastZ;
     private SensorManager sensorManager;
