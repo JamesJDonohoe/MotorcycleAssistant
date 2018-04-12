@@ -53,12 +53,14 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".BrakingInfoActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".TutorialActivity"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".CornerInfoActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:screenOrientation="portrait"/>
 
     </application>

@@ -97,12 +97,14 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
     double disKilom;
     double meters;
+    double avgdisSpeed;
 
     //Variables for timers
     TextView timerTextView;
     long startTime = 0;
 
     private TextView speedText;
+    private TextView disText;
 
     //Handler for timer
     Handler timerHandler = new Handler();
@@ -139,6 +141,8 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         //Sets the text of speed_text and changes when location updated
         speedText = (TextView)findViewById(R.id.speed_text);
         speedText.setText("...");
+
+        disText = (TextView)findViewById(R.id.disText);
 
         //Checks to see if the sensor is available on the device
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -237,7 +241,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     public void onConnected(Bundle bundle) {
         //Used to get an accurate location of the device
         userLocationRequest = new LocationRequest();
-        //Requests the location every five seconds
+        //Requests the location every second
         userLocationRequest.setInterval(1000);
         userLocationRequest.setFastestInterval(1000);
         userLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -268,7 +272,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         float zoomLevel = 12.0f;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myCoordinates, zoomLevel));
 
-        //Adds marker on each location update
+        //Adds the new coordinated on each update to the points array
         points.add(myCoordinates);
 
         //Adds a marker at the first coordinate in the array which is always a starting location
@@ -285,27 +289,31 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         //gets speed from Location and converts it to Km/h
         speedText.setText(String.format("%.0f - Km/h", location.getSpeed() * 3.6));
 
+        //Displays journey distance to the user as they are driving
+        //Get distance function called to get returned distance
+        getDistance();
+        disText.setText(String.format("%.2f - Km", disKilom));
     }
 
 
     //Gets start and end location and calculates distance between them
     @SuppressLint("DefaultLocale")
     private double getDistance(){
-
         //Uses computeLength to calculate the distance in meters from my Array of points
         meters = SphericalUtil.computeLength(points);
 
         //Divides by a 1000 to get meters
         disKilom = meters / 1000;
 
+        avgdisSpeed = Double.parseDouble(String.format("%.2f", disKilom));
         //Rounds it to 2 decimal places
-        return Double.parseDouble(String.format("%.2f", disKilom));
+        return avgdisSpeed;
 
     }
 
     //Uses basic average speed formula distance over time to calculate average speed
     private int avgSpeed(){
-        return (int) (disKilom % startTime);
+        return (int) (avgdisSpeed % startTime);
     }
 
     @Override
@@ -396,11 +404,26 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         //Left and right / Cornering
         if(deltaX >=8 || deltaX <= -8){
             xCounter++;
+
+            //Adds a marker if the user corners too hard
+            LocationMarker.setPosition(myCoordinates);
+            mMap.addMarker(new MarkerOptions().position(myCoordinates)
+                    .title("Cornering Fault")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+
         }
         //Up and down / Breaking and acceleration
-        if(deltaY >=5 || deltaY <-5 && deltaZ >=5 || deltaZ <-5){
+        if(deltaY >=10 || deltaY <-5 && deltaZ >=5 || deltaZ <-5){
             yzCounter++;
+
+            //Adds a marker if the user accelerates or brakes too hard
+            LocationMarker.setPosition(myCoordinates);
+            mMap.addMarker(new MarkerOptions().position(myCoordinates)
+                    .title("Braking / Acceleration Fault")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
         }
+
 
         //Button to stop journey
         final Button stopBtn;
