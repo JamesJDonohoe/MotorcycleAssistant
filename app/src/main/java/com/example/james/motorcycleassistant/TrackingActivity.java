@@ -55,6 +55,7 @@ import com.google.maps.android.SphericalUtil;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 
 import static com.example.james.motorcycleassistant.R.id.map;
 
@@ -95,10 +96,11 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     //Making myCoordinates Global
     LatLng myCoordinates;
 
+    //Variables for distance and average speed
     double disKilom;
     double meters;
     double avgdisSpeed;
-
+    
     //Variables for timers
     TextView timerTextView;
     long startTime = 0;
@@ -260,7 +262,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
     }
 
     //Handles location, sets marker onto location
-    @SuppressLint("DefaultLocale")
+    @SuppressLint({"DefaultLocale", "ResourceAsColor"})
     @Override
     public void onLocationChanged(final Location location) {
         //Adds a marker on the current position found in LatLng
